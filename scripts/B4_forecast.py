@@ -4,10 +4,8 @@
 # In[1]:
 
 
-import os, inspect
-import sys
-import fnmatch
-os.chdir(os.path.dirname(os.getcwd()))
+import os
+#os.chdir(os.path.dirname(os.getcwd()))
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
@@ -49,7 +47,7 @@ def objective(trial, input_X, input_y):
         "num_iterators": trial.suggest_categorical("num_iterators", [10000]),
         "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3),
         "num_leaves": trial.suggest_int("num_leaves", 20, 3000, step=20),
-        "max_depth": trial.suggest_categorical("max_depth", [-1, 5, 10, 15, 20, 25]), 
+        "max_depth": trial.suggest_categorical("max_depth", [-1, 5, 10, 15, 20, 25]),
         "min_data_in_leaf": trial.suggest_int("min_data_in_leaf", 20, 100, step=10),
         "lambda_l1": trial.suggest_int("lambda_l1", 0, 100, step=5),
         "lambda_l2": trial.suggest_int("lambda_l2", 0, 100, step=5),
@@ -67,27 +65,27 @@ def objective(trial, input_X, input_y):
             if abs(correlation_matrix.iloc[i, j]) > trial.suggest_categorical("correlation_value", [0.6, 0.7, 0.8, 0.9, 1]):
                 colname = correlation_matrix.columns[i]
                 correlated_features.add(colname)
-    
+
     input_X = input_X[(input_y - input_y.mean())/input_y.std(ddof=0) < 3]
     input_y = input_y[(input_y - input_y.mean())/input_y.std(ddof=0) < 3]
-    
+
     # Make temporary division
     X_train, y_train = input_X.loc[input_X.index < train_date].copy(), input_y.loc[input_y.index < train_date].copy()
     X_eval, y_eval = input_X.loc[(input_X.index >= train_date) & (input_X.index < split_date)].copy(), input_y.loc[(input_y.index >= train_date) & (input_y.index < split_date)].copy()
-    
-    n = len(X_train)
-    
+
+    len(X_train)
+
     X_train, y_train = X_train.fillna(value=0), y_train.fillna(value=0)
     X_eval, y_eval = X_eval.fillna(value=0), y_eval.fillna(value=0)
-                
+
     X_train.drop(labels=correlated_features, axis=1, inplace=True)
     X_eval.drop(labels=correlated_features, axis=1, inplace=True)
 
     model = lgb.LGBMClassifier(**param)
-    
+
     model.fit(
-        X_train, 
-        y_train,                     
+        X_train,
+        y_train,
         eval_set=[(X_eval, y_eval)],
         eval_metric='auc',
         early_stopping_rounds=50,
@@ -95,7 +93,7 @@ def objective(trial, input_X, input_y):
             LightGBMPruningCallback(trial, "auc")
         ],  # Add a pruning callback
     )
-    
+
     preds = model.predict(X_eval)
     mae = mean_absolute_error(y_eval, preds)
     trial.set_user_attr(key="best_booster", value=model)
@@ -108,7 +106,7 @@ def callback(study, trial):
 
 # In[4]:
 
-
+feature_plots_dir = './plots/importances/'
 import_dir = './data/lgbm_inputs_phase2/'
 plots_dir = './plots/'
 log_dir = './logs/'
@@ -131,7 +129,7 @@ input_ds.index = input_ds.index.sort_values()
 train_date = '01-Oct-2020'
 split_date = '01-Nov-2020'
 
-# Divide features and labels 
+# Divide features and labels
 input_X, input_y = input_ds.iloc[:,1:], input_ds.iloc[:,0]
 
 
@@ -183,7 +181,11 @@ lgbmodel = pickle.load(open(model_dir+namerun+"_best_{}.pkl".format(os.path.spli
 # predict the test dataset
 forecast = pd.DataFrame(lgbmodel.predict(X_test), index=X_test.index)
 
-plotImp(lgbmodel, X_test, num = 20, fig_size = (40, 20))
+#Plotting feature importance
+f_imp, ax_imp = plt.subplots(1, figsize=(30,15))
+plt.gcf().subplots_adjust(left=0.5)
+lgb.plot_importance(lgbmodel, height=0.3, ax=ax_imp)
+plt.savefig(feature_plots_dir+namerun+'_{}.png'.format(os.path.splitext(filename)[0]))
 # FILL ZEROS FOR PLOTTING
 input_ds = input_ds.fillna(value=0)
 f, ax = plt.subplots(1)
@@ -210,7 +212,3 @@ results_df.to_csv('./results/buildings_B4.csv', header=False)
 
 
 # In[ ]:
-
-
-
-

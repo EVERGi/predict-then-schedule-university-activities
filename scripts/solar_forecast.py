@@ -4,8 +4,7 @@
 # In[1]:
 
 
-import os, inspect
-import sys
+import os
 # os.chdir(os.path.dirname(os.getcwd()))
 
 
@@ -67,7 +66,7 @@ def plot_predictions(input_ds_all, name):
                                                   style=['-','-'])
     ax.set_xbound(lower='2020-09', upper='2020-11')
     plot = plt.suptitle(name, y=1.01)
-    plot = plt.title('September 2020 Forecast vs Actuals')
+    plt.title('September 2020 Forecast vs Actuals')
     plt.show()
 
 def plotImp(model, X , num = 20, fig_size = (40, 20)):
@@ -111,7 +110,7 @@ def objective(trial, input_X, input_y):
     X_train, y_train = input_X.loc[input_X.index < train_date].copy(), input_y.loc[input_y.index < train_date].copy()
     X_eval, y_eval = input_X.loc[(input_X.index >= train_date) & (input_X.index < split_date)].copy(), input_y.loc[(input_y.index >= train_date) & (input_y.index < split_date)].copy()
 
-    n = len(X_train)
+    len(X_train)
 
     X_train, y_train = X_train.fillna(value=0), y_train.fillna(value=0)
     X_eval, y_eval = X_eval.fillna(value=0), y_eval.fillna(value=0)

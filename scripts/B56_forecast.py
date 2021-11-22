@@ -4,15 +4,13 @@
 # In[2]:
 
 
-import os, inspect
-import sys
+import os
 # os.chdir(os.path.dirname(os.getcwd()))
 
 
 # In[3]:
 
 
-import fnmatch
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
@@ -21,8 +19,6 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import seaborn as sns
 import matplotlib.pyplot as plt
-import itertools
-
 
 from prophet import Prophet
 from prophet.diagnostics import cross_validation
@@ -37,7 +33,6 @@ from sklearn import metrics
 from sklearn.metrics import mean_absolute_error
 import pickle
 from sklearn.preprocessing import LabelEncoder
-#from src.utils.functions import validation, calculate_mase
 
 
 # In[4]:
@@ -77,17 +72,6 @@ transform = 'log'
 
 
 plt.style.use('fivethirtyeight')
-
-def plotImp(model, X , num = 20, fig_size = (40, 20)):
-    feature_imp = pd.DataFrame({'Value':model.feature_importances_,'Feature':X.columns})
-    plt.figure(figsize=fig_size)
-    #sns.set(font_scale = 5)
-    sns.barplot(x="Value", y="Feature", data=feature_imp.sort_values(by="Value",
-                                                        ascending=False)[0:num])
-    plt.title('LightGBM Features (avg over folds)')
-    plt.tight_layout()
-    #plt.savefig('lgbm_importances-01.png')
-    plt.show()
 
 
 def objective(trial, X, y, X_valid, y_valid):
@@ -204,8 +188,6 @@ for i,filename in enumerate(buildings):
 
     forecast = pd.DataFrame(add_forecast['additive'], index=input_ds_test.index, columns=['additive'])
     forecast = np.expm1(forecast)
-    if (filename == 'Building4.csv'):
-        forecast = round(forecast)
 
     #Plotting feature importance
     f_imp, ax_imp = plt.subplots(1, figsize=(30,15))
@@ -213,7 +195,6 @@ for i,filename in enumerate(buildings):
     lgb.plot_importance(lgbmodel, height=0.3, ax=ax_imp)
     plt.savefig(feature_plots_dir+namerun+'_{}.png'.format(os.path.splitext(filename)[0]))
 
-    #plotImp(lgbmodel, X_test, num = 20, fig_size = (40, 20))
     # FILL ZEROS FOR PLOTTING
     input_ds = input_ds.fillna(value=0)
     f, ax = plt.subplots(1)

@@ -4,15 +4,13 @@
 # In[2]:
 
 
-import os, inspect
-import sys
+import os
 #os.chdir(os.path.dirname(os.getcwd()))
 
 
 # In[3]:
 
 
-import fnmatch
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
@@ -21,8 +19,6 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import seaborn as sns
 import matplotlib.pyplot as plt
-import itertools
-
 
 from prophet import Prophet
 from prophet.diagnostics import cross_validation
@@ -113,45 +109,6 @@ for i,filename in enumerate(buildings):
 
 plt.style.use('fivethirtyeight')
 
-def plot_predictions(input_ds_all, name):
-    # Plot the forecast with the actuals
-    f, ax = plt.subplots(1)
-    f.set_figheight(5)
-    f.set_figwidth(15)
-    _ = input_ds_all[['value','Prediction']].plot(ax=ax,
-                                                  style=['-','-'])
-    ax.set_xbound(lower='2020-09', upper='2020-10')
-    plot = plt.suptitle(name, y=1.01)
-    plot = plt.title('September 2020 Forecast vs Actuals')
-    plt.show()
-
-def plotImp(model, X , num = 20, fig_size = (40, 20)):
-    feature_imp = pd.DataFrame({'Value':model.feature_importances_,'Feature':X.columns})
-    plt.figure(figsize=fig_size)
-    #sns.set(font_scale = 5)
-    sns.barplot(x="Value", y="Feature", data=feature_imp.sort_values(by="Value",
-                                                        ascending=False)[0:num])
-    plt.title('LightGBM Features (avg over folds)')
-    plt.tight_layout()
-    #plt.savefig('lgbm_importances-01.png')
-    plt.show()
-
-def weekly_persistence(input_ds_train):
-    predictions = pd.Series(dtype='float64')
-    #input_ds_train.value[-672:].plot()
-    input_ds_train = input_ds_train.resample('15T').mean()
-    input_ds_train = input_ds_train.fillna(value=0)
-    last_week = input_ds_train.value[-672:]
-    for i in range(len(X_test)//672 + 1):
-    # get the data for the prior week
-        last_week.index = last_week.index.shift(freq='7D')
-        #last_week.plot()
-        predictions = predictions.append(last_week)
-        #print(predictions)
-    #print(predictions)
-    predictions = predictions['2020-10']
-    return predictions
-
 def objective(trial, X, y, X_valid, y_valid):
     param = {
         'metric': 'l1',
@@ -163,13 +120,7 @@ def objective(trial, X, y, X_valid, y_valid):
         "min_data_in_leaf": trial.suggest_int("min_data_in_leaf", 10, 100, step=10),
         "lambda_l1": trial.suggest_int("lambda_l1", 0, 100, step=5),
         "lambda_l2": trial.suggest_int("lambda_l2", 0, 100, step=5),
-#         'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.3,0.4,0.5,0.6,0.7,0.8,0.9, 1.0]),
-#         'subsample': trial.suggest_categorical('subsample', [0.4,0.5,0.6,0.7,0.8,1.0]),
-#         'min_child_samples': trial.suggest_int('min_child_samples', 1, 300),
-#         'cat_smooth' : trial.suggest_int('min_data_per_groups', 1, 100)
     }
-
-    #model = lgb.LGBMRegressor(**param)
 
     ds_train = lgb.Dataset(X, y, categorical_feature=['working', 'weekday'])
     ds_validate = lgb.Dataset(X_valid, y_valid, categorical_feature=['working', 'weekday'])
@@ -227,10 +178,6 @@ for i,filename in enumerate(buildings):
 
     if  (filename != 'Building5.csv'):
         input_ds = input_ds.join(input_ds['y'].shift(freq='35D'),how='inner',rsuffix='-3360')
-#     if 'yearly' in input_ds.columns:
-#         input_ds['additive_term'] = input_ds['y'] - input_ds['trend'] - input_ds['yearly'] - input_ds['holidays']
-#     else:
-#         input_ds['additive_term'] = input_ds['y'] - input_ds['trend'] - input_ds['holidays']
 
     if (filename == 'Building5.csv'):
         train_date = '01-Aug-2020'
@@ -287,10 +234,6 @@ for i,filename in enumerate(buildings):
     lgbmodel = pickle.load(open(model_dir+namerun+"_best_{}.pkl".format(os.path.splitext(filename)[0]), "rb"))
     # predict the test dataset
     add_forecast = pd.DataFrame(lgbmodel.predict(X_test), index=input_ds_test.index, columns=['additive'])
-#     if 'yearly' in input_ds_test.columns:
-#         forecast = add_forecast['additive'] + input_ds_test['trend'] + input_ds_test['yearly'] + input_ds_test['holidays']
-#     else:
-#         forecast = add_forecast['additive'] + input_ds_test['trend'] + input_ds_test['holidays']
     forecast = pd.DataFrame(add_forecast['additive'], index=input_ds_test.index, columns=['additive'])
     forecast = np.expm1(forecast)
     if (filename == 'Building4.csv'):
@@ -302,7 +245,6 @@ for i,filename in enumerate(buildings):
     lgb.plot_importance(lgbmodel, height=0.3, ax=ax_imp)
     plt.savefig(feature_plots_dir+namerun+'_{}.png'.format(os.path.splitext(filename)[0]))
 
-    #plotImp(lgbmodel, X_test, num = 20, fig_size = (40, 20))
     # FILL ZEROS FOR PLOTTING
     input_ds = input_ds.fillna(value=0)
     f, ax = plt.subplots(1)
@@ -312,7 +254,7 @@ for i,filename in enumerate(buildings):
     forecast.plot(ax=ax, style=['-'])
     ax.set_xbound(lower='2020-09', upper='2020-12')
     plot = plt.suptitle(filename, y=1.01)
-    plot = plt.title('September Actual and October Forecasted')
+    plot = plt.title('November Forecasted')
     plt.savefig(plots_dir+namerun+'_{}.png'.format(os.path.splitext(filename)[0]))
     predictions[filename] = list(forecast)
     results_df = pd.concat([results_df, forecast.rename({'additive':os.path.splitext(filename)[0]}, axis=1).T])
