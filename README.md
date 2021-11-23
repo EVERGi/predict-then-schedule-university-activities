@@ -5,7 +5,7 @@ The python version
 
 Install the necessary python libraries by executing:
 ```shell
-pip install -r requirements.txt .
+pip install -r requirements.txt
 ```
 
 The forecast is generated when running execute.py script from the forecast directory.
@@ -32,7 +32,7 @@ https://www.gurobi.com/documentation/9.0/quickstart_linux/software_installation_
 
 Then install necessary python libraries by executing:
 ```shell
-pip install -r requirements.txt .
+pip install -r requirements.txt
 ```
 
 The modified Optim_eval needs to be compiled, to do this execute the following commands:
