@@ -8,7 +8,7 @@ import datetime
 from instance_parser import Problem
 from colour import Color
 
-save_figs = True
+save_figs = False
 
 def plot_generation_results(result_dir):
 
@@ -262,6 +262,21 @@ def plot_improvement_and_battery(impr_file, battery_file):
     plt.tight_layout()
     if save_figs:
         plt.savefig("../Figures/improvement_comparison.png")
+
+def plot_all_results():
+    plot_generation_results("generation_results/")
+
+    plot_improvement_and_battery("improvement_results.csv", "improvement_battery.csv")
+
+    inst_path = "instances_p2/phase2_instance_small_0.txt"
+    start = datetime.datetime(2020, 11, 1)
+    end = datetime.datetime(2020, 12, 1)
+    prob = Problem(inst_path, start, end)
+    sol_path = "sol_small_0_27455.75466152492.txt"
+    prob.parse_solution_file(sol_path)
+    prob.plot_activities()
+
+    plt.show()
 
 if __name__ == "__main__":
     plot_generation_results("generation_results/")
