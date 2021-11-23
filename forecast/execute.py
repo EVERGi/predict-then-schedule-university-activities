@@ -12,7 +12,7 @@ results_dir = './results/'
 dirs = [prophets_dir, feature_plots_dir, plots_dir, log_dir, model_dir, results_dir]
 for dir in dirs:
     if not os.path.exists(dir):
-        dir.mkdir(parents=True, exist_ok=True)
+        Path(dir).mkdir(parents=True, exist_ok=True)
 
 print('_______________________________________')
 print('preprocessing starts')
