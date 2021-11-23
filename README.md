@@ -30,4 +30,6 @@ mvn package
 
 ### Execution
 
-When everything is correctly installed you can execute 
+When everything is correctly installed you can execute
+The forecast is generated when running execute.py script from the forecast directory
+The final output of the forecast is saved to './resutls/submission_phase2.csv'
