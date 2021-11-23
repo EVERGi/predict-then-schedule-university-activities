@@ -1,3 +1,17 @@
+import os
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O
+
+prophets_dir = './data/prophets/'
+feature_plots_dir = './plots/importances/'
+plots_dir = './plots/'
+log_dir = './logs/'
+model_dir = './models/'
+dirs = [prophets_dir, feature_plots_dir, plots_dir, log_dir, model_dir]
+for dir in dirs:
+    if not os.path.exists(dir):
+        os.mkdir(dir)
+
 print('_______________________________________')
 print('preprocessing starts')
 import scripts.preprocessing
@@ -23,8 +37,7 @@ print('_______________________________________')
 import scripts.B56_forecast
 print('forecasting buildings 5,6 is succesful')
 print('_______________________________________')
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O
+
 
 solar = pd.read_csv('./results/solar.csv', header=None)
 b013 = pd.read_csv('./results/buildings_B5B6.csv', header=None)

@@ -28,12 +28,14 @@ from workalendar.oceania import Australia
 # In[ ]:
 
 
-def solar_slices(import_dir='./data/generation_phase2/', weather_data='./data/weather/weather_all.csv', output_dir='./data/generation_phase2_sliced/'):
+def solar_slices(import_dir, output_dir):
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     filelist = os.listdir(import_dir)
     if ('.ipynb_checkpoints' in filelist):
         filelist.remove('.ipynb_checkpoints')
+    if ('.DS_Store' in filelist):
+        filelist.remove('.DS_Store')
     print(list(filelist))
     for filename in filelist:
         path = os.path.join(import_dir, filename)
@@ -85,12 +87,14 @@ def is_working(date):
     return int(cal.is_working_day(date))
 
 
-def create_model_ins(import_dir='./data/load_phase2/', weather_data='./data/weather/weather_all.csv', output_dir='./data/xgboost_ins_october/'):
+def create_model_ins(import_dir, weather_data, output_dir):
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     filelist = os.listdir(import_dir)
     if ('.ipynb_checkpoints' in filelist):
         filelist.remove('.ipynb_checkpoints')
+    if ('.DS_Store' in filelist):
+        filelist.remove('.DS_Store')
     print(list(filelist))
     for filename in filelist:
         path = os.path.join(import_dir, filename)
@@ -166,12 +170,14 @@ def create_model_ins(import_dir='./data/load_phase2/', weather_data='./data/weat
 # In[ ]:
 
 
-def create_solar_model_ins(import_dir='./data/generation_phase2_sliced/', weather_data='./data/weather/weather_all.csv', output_dir='./data/xgboost_ins_october/'):
+def create_solar_model_ins(import_dir, weather_data, output_dir):
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     filelist = os.listdir(import_dir)
     if ('.ipynb_checkpoints' in filelist):
         filelist.remove('.ipynb_checkpoints')
+    if ('.DS_Store' in filelist):
+        filelist.remove('.DS_Store')
     print(list(filelist))
     for filename in filelist:
         path = os.path.join(import_dir, filename)
@@ -181,6 +187,7 @@ def create_solar_model_ins(import_dir='./data/generation_phase2_sliced/', weathe
         # Add weather features
         weather = pd.read_csv(weather_data, index_col='datetime')
         weather.index = pd.to_datetime(weather.index)
+
         # Add out-of-sample timestamps
         df = df.join(df.shift(freq='35D'), how='outer', rsuffix='-3360')
         df = df.drop('value-3360', axis=1)
@@ -217,18 +224,18 @@ def create_solar_model_ins(import_dir='./data/generation_phase2_sliced/', weathe
 # In[ ]:
 
 
-solar_slices(import_dir='./data/generation_phase2/')
+solar_slices(import_dir='./data/generation_phase2/', output_dir='./data/generation_phase2_sliced/')
 
 
 # In[ ]:
 
 
-create_model_ins(weather_data='./data/weather/weather_combi.csv',
+create_model_ins(import_dir='./data/load_phase2/', weather_data='./data/weather/weather_combi.csv',
                  output_dir='./data/lgbm_inputs_phase2/')
 
 
 # In[ ]:
 
 
-create_solar_model_ins(weather_data='./data/weather/weather_combi.csv',
-                       import_dir='./data/generation_phase2_sliced/', output_dir='./data/lgbm_inputs_phase2/')
+create_solar_model_ins(import_dir='./data/generation_phase2_sliced/', weather_data='./data/weather/weather_combi.csv',
+                 output_dir='./data/lgbm_inputs_phase2/')
