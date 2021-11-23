@@ -1,4 +1,3 @@
-import multiprocessing
 import optimisation_pygad
 import optimisation_pygmo
 import improve_final_sol
