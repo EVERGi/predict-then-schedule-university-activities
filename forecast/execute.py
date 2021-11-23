@@ -7,7 +7,8 @@ feature_plots_dir = './plots/importances/'
 plots_dir = './plots/'
 log_dir = './logs/'
 model_dir = './models/'
-dirs = [prophets_dir, feature_plots_dir, plots_dir, log_dir, model_dir]
+results_dir = './results/'
+dirs = [prophets_dir, feature_plots_dir, plots_dir, log_dir, model_dir, results_dir]
 for dir in dirs:
     if not os.path.exists(dir):
         os.mkdir(dir)
