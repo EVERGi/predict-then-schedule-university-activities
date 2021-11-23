@@ -1,8 +1,8 @@
-plots/
-logs/
-data/prophets/
-.DS_Store
-logs/.DS_Store
-models/.DS_Store
-plots/.DS_Store
-src/.DS_Store
+forecast/plots/
+forecast/logs/
+forecast/data/prophets/
+forecast/.DS_Store
+forecast/logs/.DS_Store
+forecast/models/.DS_Store
+forecast/plots/.DS_Store
+forecast/src/.DS_Store
