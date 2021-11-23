@@ -59,4 +59,4 @@ cd optimise
 The execution will run in about 30 minutes, the results shown are obtained running CMA-ES with a population size of 200 for 120 seconds. The improved solution and the battery schedule are generated exactly as for the competition.
 You can change the population size, evolutionary algorithm used and time to find the base solution in the execute.py file itself.
 
-The plots that appear show the graphs presented in the report but for the run you just executed and also the activity plot for the small_0 instance submitted for the competition and presented in the report.
+The plots that appear show the graphs presented in the report but for the run you just executed and also the activity plot for the small_0 instance submitted for the competition and presented in the report. In addition there is also a plot of the final load after improvement (in blue) and of the load with the battery (in orange) for the small_0 instance.

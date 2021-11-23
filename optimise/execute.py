@@ -19,12 +19,14 @@ def get_base_solution(cmaes, pop):
 
 def remove_prev_runs():
     shutil.rmtree('generation_results/', ignore_errors=True)
-    shutil.rmtree('solution_impr_p2/', ignore_errors=True)
-    shutil.rmtree('solution_sched_p2/', ignore_errors=True)
+    shutil.rmtree('solutions_impr_p2/', ignore_errors=True)
+    shutil.rmtree('solutions_sched_p2/', ignore_errors=True)
+    shutil.rmtree('solutions_batt_p2/', ignore_errors=True)
     silentremove("improvement_battery.csv")
     silentremove("improvement_results.csv")
     silentremove("load_java.csv")
     silentremove("log_results.csv")
+    silentremove("load_price.csv")
 
 def silentremove(filename):
     try:
@@ -36,7 +38,7 @@ if __name__ == "__main__":
     cmaes = True
     pop = 200
 
-    seconds = 30
+    seconds = 120
 
     remove_previous_runs = False
 
@@ -54,6 +56,6 @@ if __name__ == "__main__":
     improve_final_sol.complete_improve()
     
     optimize_battery.complete_batt_sched()
-
+    
     generate_results.plot_all_results()
     

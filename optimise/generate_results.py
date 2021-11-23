@@ -104,9 +104,11 @@ def plot_generation_results(result_dir):
     batt_large = 128957.64
 
     red = Color("red")
-    colors_CMAES = list(red.range_to(Color("#FDDA0D"),len(pygmo_small.keys())))[::-1]
+    if len(pygmo_small.keys()) != 0:
+        colors_CMAES = list(red.range_to(Color("#FDDA0D"),len(pygmo_small.keys())))[::-1]
     blue = Color("blue")
-    colors_GA = list(blue.range_to(Color("#90EE90"),len(pygad_small.keys())))[::-1]
+    if len(pygad_small.keys()) != 0:
+        colors_GA = list(blue.range_to(Color("#90EE90"),len(pygad_small.keys())))[::-1]
 
     sorted_keys = list(pygad_small.keys())
     sorted_keys.sort()
@@ -138,10 +140,10 @@ def plot_generation_results(result_dir):
     ax.set_position([box.x0, box.y0 + box.height * 0.25,
                  box.width, box.height * 0.85])
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
-          fancybox=True, shadow=True, ncol=4)
+          fancybox=True, shadow=True, ncol=3)
     # plt.tight_layout()
     
-    plt.ylim((1.3e5,1.6e5))
+    #plt.ylim((1.3e5,1.6e5))
 
     if save_figs:
         plt.savefig("../Figures/small_base_long.png", bbox_inches='tight')
@@ -172,11 +174,11 @@ def plot_generation_results(result_dir):
     ax.set_position([box.x0, box.y0 + box.height * 0.25,
                  box.width, box.height * 0.85])
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
-          fancybox=True, shadow=True, ncol=4)
-    ax.get_legend().remove()
+          fancybox=True, shadow=True, ncol=3)
+    # ax.get_legend().remove()
     # plt.tight_layout()
     
-    plt.ylim((1.25e5,1.55e5))
+    #plt.ylim((1.25e5,1.55e5))
 
     if save_figs:
         plt.savefig("../Figures/large_base_long.png", bbox_inches='tight',)
