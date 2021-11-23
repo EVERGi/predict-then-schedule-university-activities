@@ -43,8 +43,8 @@ print('_______________________________________')
 
 solar = pd.read_csv('./results/solar.csv', header=None)
 b013 = pd.read_csv('./results/buildings_B5B6.csv', header=None)
-b4 = pd.read_csv('./results/buildings', header=None)
-b56 = pd.read_csv('./results/buildings_18Oct_stationary.csv', header=None)
+b4 = pd.read_csv('./results/buildings_B4.csv', header=None)
+b56 = pd.read_csv('./results/buildings_B013.csv', header=None)
 
 results = pd.concat([solar, b013, b4, b56], axis=0)
 print(results.head())
