@@ -1,5 +1,19 @@
 # EVERGI_predict_optimize
 
+## Forecast generation
+The python version
+
+Install the necessary python libraries by executing:
+```shell
+pip install -r requirements.txt .
+```
+
+The forecast is generated when running execute.py script from the forecast directory.
+First a preprocessing script is run, which takes about a minute.
+Further, the scripts for producing forecast for solar and building time series are executed in succession.
+An estimate for the running time should be about an hour.
+The final output of the forecast is saved to './results/submission_phase2.csv'
+
 ## Schedule optimisation
 -------------------------
 
@@ -31,6 +45,3 @@ mvn package
 ### Execution
 
 When everything is correctly installed you can execute.
-
-The forecast is generated when running execute.py script from the forecast directory.
-The final output of the forecast is saved to './resutls/submission_phase2.csv'
