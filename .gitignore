@@ -1,6 +1,10 @@
 forecast/plots/
 forecast/logs/
-forecast/data/prophets/
+forecast/data/prophets
+forecast/data/weather/.DS_Store
+forecast/data/lgbm_inputs_phase2/.DS_Store
+forecast/data/generation_phase2_sliced/.DS_Store
+forecast/data/.DS_Store
 forecast/.DS_Store
 forecast/logs/.DS_Store
 forecast/models/.DS_Store

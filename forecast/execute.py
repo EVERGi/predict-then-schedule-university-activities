@@ -1,6 +1,7 @@
 import os
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O
+from pathlib import Path
 
 prophets_dir = './data/prophets/'
 feature_plots_dir = './plots/importances/'
@@ -11,7 +12,7 @@ results_dir = './results/'
 dirs = [prophets_dir, feature_plots_dir, plots_dir, log_dir, model_dir, results_dir]
 for dir in dirs:
     if not os.path.exists(dir):
-        os.mkdir(dir)
+        dir.mkdir(parents=True, exist_ok=True)
 
 print('_______________________________________')
 print('preprocessing starts')
