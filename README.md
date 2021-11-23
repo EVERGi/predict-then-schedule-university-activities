@@ -51,7 +51,8 @@ The final output of the forecast is saved to './results/submission_phase2.csv'
 The optimisation code has been tested successfully on Linux with python versions 3.7 and 3.8.
 
 When everything is correctly installed you can execute the execute.py file in the optimise folder.
-!!! You need to execute it from inside the optimis folder so don't forget to execute the following command when in the root directory of the project:
+
+!!! You need to execute it from inside the optimise folder so don't forget to execute the following command when in the root directory of the project:
 ```shell
 cd optimise
 ```
