@@ -17,6 +17,15 @@ def get_base_solution(cmaes, pop):
     
     return jobs
 
+def remove_prev_runs():
+    shutil.rmtree('generation_results/', ignore_errors=True)
+    shutil.rmtree('solution_impr_p2/', ignore_errors=True)
+    shutil.rmtree('solution_sched_p2/', ignore_errors=True)
+    silentremove("improvement_battery.csv")
+    silentremove("improvement_results.csv")
+    silentremove("load_java.csv")
+    silentremove("log_results.csv")
+
 def silentremove(filename):
     try:
         os.remove(filename)
@@ -32,13 +41,7 @@ if __name__ == "__main__":
     remove_previous_runs = False
 
     if remove_previous_runs:
-        shutil.rmtree('generation_results/', ignore_errors=True)
-        shutil.rmtree('solution_impr_p2/', ignore_errors=True)
-        shutil.rmtree('solution_sched_p2/', ignore_errors=True)
-        silentremove("improvement_battery.csv")
-        silentremove("improvement_results.csv")
-        silentremove("load_java.csv")
-        silentremove("log_results.csv")
+        remove_prev_runs()
 
 
     jobs = get_base_solution(cmaes, pop)
@@ -52,5 +55,5 @@ if __name__ == "__main__":
     
     optimize_battery.complete_batt_sched()
 
-    generate_results.plot_generation_results()
+    generate_results.plot_all_results()
     
