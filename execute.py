@@ -1,26 +1,26 @@
 print('_______________________________________')
 print('preprocessing starts')
-import scripts.preprocessing
+import forecsat.preprocessing
 print('preprocessing finishes')
 print('_______________________________________')
 print('forecasting solar')
 print('_______________________________________')
-import scripts.solar_forecast
+import forecast.solar_forecast
 print('forecasting solar is succesful')
 print('_______________________________________')
 print('forecasting buildings 0,1,3')
 print('_______________________________________')
-import scripts.B013_forecast
+import forecast.B013_forecast
 print('forecasting buildings 0,1,3 is succesful')
 print('_______________________________________')
 print('forecasting building 4')
 print('_______________________________________')
-import scripts.B4_forecast
+import forecast.B4_forecast
 print('forecasting buildings 4 is succesful')
 print('_______________________________________')
 print('forecasting buildings 5,6')
 print('_______________________________________')
-import scripts.B56_forecast
+import forecast.B56_forecast
 print('forecasting buildings 5,6 is succesful')
 print('_______________________________________')
 import numpy as np # linear algebra
