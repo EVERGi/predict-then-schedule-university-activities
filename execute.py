@@ -1,6 +1,6 @@
 print('_______________________________________')
 print('preprocessing starts')
-import forecsat.preprocessing
+import forecast.preprocessing
 print('preprocessing finishes')
 print('_______________________________________')
 print('forecasting solar')
