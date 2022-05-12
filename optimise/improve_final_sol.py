@@ -328,8 +328,7 @@ def improve_dir(dir_to_impr, dir_improved, version):
         p.start()
         time.sleep(0.5)
 
-        #if i%10 == 9:
-        #    p.join()
+
     return jobs
 
 def complete_improve():

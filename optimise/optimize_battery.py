@@ -30,7 +30,7 @@ class ModelBattery():
 
     def optimise(self):
         opt = pyo.SolverFactory('gurobi')
-        opt.solve(self.model)
+        opt.solve(self.model, options={'TimeLimit': 1200})
 
         results = dict()
 
@@ -76,7 +76,7 @@ def build_params(model, batt, load, price):
     batt_max_p = np.array([i["max_power"] for i in batt])
     model.batt_max_p = pyo.Param(model.batt_id, initialize=array_to_dict(batt_max_p))
 
-    batt_cap = np.array([i["capacity"] for i in batt])
+    batt_cap = np.array([i["capacity"]*4 for i in batt])
     model.batt_cap = pyo.Param(model.batt_id, initialize=array_to_dict(batt_cap))
 
 
@@ -99,8 +99,8 @@ def build_constr(model):
     def soc_change(model, t, batt):
         return (model.soc[(t + 1), batt] ==
                 model.soc[t, batt] -
-                model.charge_batt[t, batt] * model.batt_max_p[batt]/4
-                + model.discharge_batt[t, batt] * model.batt_max_p[batt]/4)
+                model.charge_batt[t, batt] * model.batt_max_p[batt]
+                + model.discharge_batt[t, batt] * model.batt_max_p[batt])
 
     model.soc_change = pyo.Constraint(model.time, model.batt_id, rule=soc_change)
 
@@ -231,8 +231,18 @@ def optimise_all_found_sols(sol_dir, to_dir):
     if not os.path.exists(to_dir):
         os.mkdir(to_dir)
 
-    for file in os.listdir(sol_dir):
+    done_sols = list()
+    for file in sorted(os.listdir(sol_dir)):
         print(file)
+        
+        split_filename = file.split("_")
+        instance = split_filename[1] + "_" + split_filename[2]
+        
+        if instance in done_sols:
+            continue
+        else:
+            done_sols.append(instance)
+
         if phase == 1:
             start = datetime.datetime(2020, 10, 1)
             end = datetime.datetime(2020, 11, 1)
@@ -240,8 +250,6 @@ def optimise_all_found_sols(sol_dir, to_dir):
             start = datetime.datetime(2020, 11, 1)
             end = datetime.datetime(2020, 12, 1)
 
-        split_filename = file.split("_")
-        instance = split_filename[1] + "_" + split_filename[2]
         if phase == 1:
             instance_path = "instances/phase1_instance_" + instance + ".txt"
         if phase == 2:
@@ -281,8 +289,9 @@ def count_total_score(sol_dir):
     sum = 0
     for key, value in solutions.items():
         sum += value
-    print("Total score")
-    print(sum)
+    #print("Total score")
+    #print(sum)
+    return sum
 
 
 def complete_batt_sched():

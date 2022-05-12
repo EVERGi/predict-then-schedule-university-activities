@@ -278,7 +278,6 @@ def plot_all_results():
     prob.parse_solution_file(sol_path)
     prob.plot_activities()
 
-    plt.show()
 
 if __name__ == "__main__":
     plot_generation_results("generation_results/")
