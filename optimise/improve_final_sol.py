@@ -5,25 +5,24 @@ import os
 import multiprocessing
 import time
 
-def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recur = False):
-    
-    all_sols = problem.sol_small+problem.sol_large
-    all_act = problem.recur+problem.once_off
-    
-    
+
+def improve_sol(problem: Problem, version, sol_dir, no_once_off=False, no_recur=False):
+
+    all_sols = problem.sol_small + problem.sol_large
+    all_act = problem.recur + problem.once_off
+
     for sol in all_sols:
         if (not sol["recur"] and no_once_off) or (sol["recur"] and no_recur):
             if sol in problem.sol_small:
                 problem.sol_small.remove(sol)
             else:
                 problem.sol_large.remove(sol)
-    
 
-    all_sols = problem.sol_small+problem.sol_large
+    all_sols = problem.sol_small + problem.sol_large
 
     act_days_recur = dict()
     act_days_once_off = dict()
-    
+
     for sol in all_sols:
         if sol["recur"]:
             act_days_recur[sol["id"]] = sol["day"]
@@ -33,8 +32,8 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
     # print("Progress")
     for level in range(0, 5):
         for act in all_act:
-            all_sols = problem.sol_small+problem.sol_large
-            recur = act in  problem.recur
+            all_sols = problem.sol_small + problem.sol_large
+            recur = act in problem.recur
             if not recur:
                 continue
             id = act["id"]
@@ -44,7 +43,7 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
             else:
                 info = act
                 tree = problem.tree_once_off[id]
-            
+
             small = info["room_size"] == "S"
 
             precedences = tree["precedences"]
@@ -53,46 +52,57 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
 
             if level == tree["levels_above"]:
                 prog_count += 1
-                print(prog_count,"out of ", len(all_act))
+                print(prog_count, "out of ", len(all_act))
                 if recur:
                     day_start = tree["days_allowed"][0]
-                    day_end = tree["days_allowed"][-1]+1
+                    day_end = tree["days_allowed"][-1] + 1
                 else:
                     if version == 1:
                         day_start = tree["days_allowed"][0]
-                        day_end = tree["days_allowed"][-1]+1
+                        day_end = tree["days_allowed"][-1] + 1
                     if version == 2:
                         day_start = 0
                         day_end = 31
-                
+
                 count_prec = 0
                 for sol in all_sols:
                     if sol["recur"] == recur:
                         if sol["id"] in precedences:
                             count_prec += 1
-                            day_start = max(day_start, sol["day"]+1)
+                            day_start = max(day_start, sol["day"] + 1)
                         elif sol["id"] in nodes_below:
                             day_end = min(day_end, sol["day"])
-                
+
                 if count_prec != len(precedences):
                     continue
 
                 possible_day_time = list()
-                
+
                 for day in range(day_start, day_end):
                     duration = act["duration"]
                     if recur:
-                        possible_day_time += [[day, time] for time in range(9*4,17*4-duration)]
+                        possible_day_time += [
+                            [day, time] for time in range(9 * 4, 17 * 4 - duration)
+                        ]
                     else:
                         if day == 0:
-                            possible_day_time += [[day, time+day*(24*4)] for time in range(0,(24-11)*4)]
+                            possible_day_time += [
+                                [day, time + day * (24 * 4)]
+                                for time in range(0, (24 - 11) * 4)
+                            ]
                         elif day == 30:
-                            possible_day_time += [[day, time+day*(24*4)-11*4] for time in range(0,11*4-duration)]
+                            possible_day_time += [
+                                [day, time + day * (24 * 4) - 11 * 4]
+                                for time in range(0, 11 * 4 - duration)
+                            ]
                         else:
-                            possible_day_time += [[day, time+day*(24*4)-11*4] for time in range(0,24*4)]
-                
+                            possible_day_time += [
+                                [day, time + day * (24 * 4) - 11 * 4]
+                                for time in range(0, 24 * 4)
+                            ]
+
                 best_score = problem.get_objective_function()
-                
+
                 if recur and no_recur:
                     best_score = 100000
 
@@ -111,11 +121,16 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
                             sol_ind = large_ind
                             in_sol = True
                             break
-                
-                
+
                 for poss in possible_day_time:
-                    new_sol = {"recur": recur, "id": id, "day": poss[0], "start_time": poss[1], "keep": True}
-                
+                    new_sol = {
+                        "recur": recur,
+                        "id": id,
+                        "day": poss[0],
+                        "start_time": poss[1],
+                        "keep": True,
+                    }
+
                     if in_sol:
                         if small:
                             problem.sol_small.remove(old_sol)
@@ -132,9 +147,9 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
                         else:
                             feasible = problem.assign_rooms(new_sol)
                             problem.sol_large += [new_sol]
-                    
+
                     score = problem.get_objective_function()
-                    
+
                     if score < best_score and feasible:
                         # print(score)
                         best_score = score
@@ -150,12 +165,12 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
                         else:
                             problem.sol_large.remove(new_sol)
                             if in_sol:
-                                problem.sol_large.insert(sol_ind, old_sol)   
+                                problem.sol_large.insert(sol_ind, old_sol)
 
     for level in range(0, 31):
         for act in all_act:
-            all_sols = problem.sol_small+problem.sol_large
-            recur = act in  problem.recur
+            all_sols = problem.sol_small + problem.sol_large
+            recur = act in problem.recur
             if recur:
                 continue
             id = act["id"]
@@ -165,7 +180,7 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
             else:
                 info = act
                 tree = problem.tree_once_off[id]
-            
+
             small = info["room_size"] == "S"
 
             precedences = tree["precedences"]
@@ -174,46 +189,57 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
 
             if level == tree["levels_above"]:
                 prog_count += 1
-                print(prog_count,"out of ", len(all_act))
+                print(prog_count, "out of ", len(all_act))
                 if recur:
                     day_start = tree["days_allowed"][0]
-                    day_end = tree["days_allowed"][-1]+1
+                    day_end = tree["days_allowed"][-1] + 1
                 else:
                     if version == 1:
                         day_start = tree["days_allowed"][0]
-                        day_end = tree["days_allowed"][-1]+1
+                        day_end = tree["days_allowed"][-1] + 1
                     if version == 2:
                         day_start = 0
                         day_end = 31
-                
+
                 count_prec = 0
                 for sol in all_sols:
                     if sol["recur"] == recur:
                         if sol["id"] in precedences:
                             count_prec += 1
-                            day_start = max(day_start, sol["day"]+1)
+                            day_start = max(day_start, sol["day"] + 1)
                         elif sol["id"] in nodes_below:
                             day_end = min(day_end, sol["day"])
-                
+
                 if count_prec != len(precedences):
                     continue
 
                 possible_day_time = list()
-                
+
                 for day in range(day_start, day_end):
                     duration = act["duration"]
                     if recur:
-                        possible_day_time += [[day, time] for time in range(9*4,17*4-duration)]
+                        possible_day_time += [
+                            [day, time] for time in range(9 * 4, 17 * 4 - duration)
+                        ]
                     else:
                         if day == 0:
-                            possible_day_time += [[day, time+day*(24*4)] for time in range(0,(24-11)*4)]
+                            possible_day_time += [
+                                [day, time + day * (24 * 4)]
+                                for time in range(0, (24 - 11) * 4)
+                            ]
                         elif day == 30:
-                            possible_day_time += [[day, time+day*(24*4)-11*4] for time in range(0,11*4-duration)]
+                            possible_day_time += [
+                                [day, time + day * (24 * 4) - 11 * 4]
+                                for time in range(0, 11 * 4 - duration)
+                            ]
                         else:
-                            possible_day_time += [[day, time+day*(24*4)-11*4] for time in range(0,24*4)]
-                
+                            possible_day_time += [
+                                [day, time + day * (24 * 4) - 11 * 4]
+                                for time in range(0, 24 * 4)
+                            ]
+
                 best_score = problem.get_objective_function()
-                
+
                 if recur and no_recur:
                     best_score = 100000
 
@@ -232,11 +258,16 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
                             sol_ind = large_ind
                             in_sol = True
                             break
-                
-                
+
                 for poss in possible_day_time:
-                    new_sol = {"recur": recur, "id": id, "day": poss[0], "start_time": poss[1], "keep": True}
-                
+                    new_sol = {
+                        "recur": recur,
+                        "id": id,
+                        "day": poss[0],
+                        "start_time": poss[1],
+                        "keep": True,
+                    }
+
                     if in_sol:
                         if small:
                             problem.sol_small.remove(old_sol)
@@ -253,9 +284,9 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
                         else:
                             feasible = problem.assign_rooms(new_sol)
                             problem.sol_large += [new_sol]
-                    
+
                     score = problem.get_objective_function()
-                    
+
                     if score < best_score and feasible:
                         # print(score)
                         best_score = score
@@ -271,32 +302,41 @@ def improve_sol(problem: Problem, version, sol_dir, no_once_off = False, no_recu
                         else:
                             problem.sol_large.remove(new_sol)
                             if in_sol:
-                                problem.sol_large.insert(sol_ind, old_sol)                                 
-    
+                                problem.sol_large.insert(sol_ind, old_sol)
+
     res = problem.get_objective_function()
     str_sol = problem.create_sol_string()
     instance_path = problem.filepath
-    file_path = sol_dir+instance_path.split("/")[-1].replace("phase2_instance_", "sol_").replace(".txt", "")+"_"+str(res)+".txt"
-    
+    file_path = (
+        sol_dir
+        + instance_path.split("/")[-1]
+        .replace("phase2_instance_", "sol_")
+        .replace(".txt", "")
+        + "_"
+        + str(res)
+        + ".txt"
+    )
+
     if version == 2:
         with open(file_path, "w+") as file:
             file.write(str_sol)
     return file_path
 
+
 def process(sol_path, dir_improved, version):
 
-    inst = sol_path.split("_")[-3]+"_"+sol_path.split("_")[-2]
-    inst_path = "instances_p2/phase2_instance_"+inst+".txt"
+    inst = sol_path.split("_")[-3] + "_" + sol_path.split("_")[-2]
+    inst_path = "instances_p2/phase2_instance_" + inst + ".txt"
     start = datetime.datetime(2020, 11, 1)
     end = datetime.datetime(2020, 12, 1)
     prob = Problem(inst_path, start, end)
     prob.parse_solution_file(sol_path)
 
     prev_res = prob.get_objective_function()
-    
-    new_path = improve_sol(prob, 1, dir_improved, version==2)
+
+    new_path = improve_sol(prob, 1, dir_improved, version == 2)
     intermediate_res = prob.get_objective_function()
-    #print(get_objective_function(inst_path, new_path))
+    # print(get_objective_function(inst_path, new_path))
     new_path = improve_sol(prob, 2, dir_improved)
 
     res = prob.get_objective_function()
@@ -305,11 +345,20 @@ def process(sol_path, dir_improved, version):
         with open("improvement_results.csv", "a+") as file:
             file.write("instance,version,improvement_1,improvement_2")
 
-    improvement_1 = intermediate_res-prev_res
+    improvement_1 = intermediate_res - prev_res
 
-    improvement_2 = res-prev_res
+    improvement_2 = res - prev_res
     with open("improvement_results.csv", "a+") as file:
-        file.write("\n"+inst+","+str(version)+","+str(improvement_1)+","+str(improvement_2))
+        file.write(
+            "\n"
+            + inst
+            + ","
+            + str(version)
+            + ","
+            + str(improvement_1)
+            + ","
+            + str(improvement_2)
+        )
 
 
 def improve_dir(dir_to_impr, dir_improved, version):
@@ -318,18 +367,25 @@ def improve_dir(dir_to_impr, dir_improved, version):
     if not os.path.exists(dir_improved):
         os.mkdir(dir_improved)
     for i, filepath in enumerate(sorted(os.listdir(dir_to_impr))):
-        instance = filepath.split("_")[1]+"_"+filepath.split("_")[2]
+        instance = filepath.split("_")[1] + "_" + filepath.split("_")[2]
         if instance in done_sols:
             continue
         else:
             done_sols.append(instance)
-        p=multiprocessing.Process(target=process, args=(dir_to_impr+"/"+filepath, dir_improved, version, ))
+        p = multiprocessing.Process(
+            target=process,
+            args=(
+                dir_to_impr + "/" + filepath,
+                dir_improved,
+                version,
+            ),
+        )
         jobs.append(p)
         p.start()
         time.sleep(0.5)
 
-
     return jobs
+
 
 def complete_improve():
     all_jobs = list()
@@ -340,6 +396,7 @@ def complete_improve():
 
     for job in all_jobs:
         job.join()
+
 
 if __name__ == "__main__":
     improve_dir("solutions_sched_p2/", "solutions_impr_p2/", 2)

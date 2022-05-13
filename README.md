@@ -1,28 +1,27 @@
-# EVERGI_predict_optimize
+# Evolutionary scheduling of university activities based on consumption forecasts to minimise electricity costs
+---------------------------------------------------------------------------------------------------------------
 
+This repository contains the code used in the "[Evolutionary scheduling of university activities based on consumption forecasts to minimise electricity costs](https://arxiv.org/abs/2202.12595)" paper presented at the 2022 IEEE Congress on Evolutionary Computation as well as to obtain the 3rd place in the "[IEEE-CIS technical challenge on predict+optimize for renewable energy scheduling](https://ieee-dataport.org/competitions/ieee-cis-technical-challenge-predictoptimize-renewable-energy-scheduling)".
 
 ### Installation
 ---------------
 
-First install the C++ dependencies.
+For the scheduling, you will need to get a Gurobi licence and install the  solver as instructed here:
 
-The first is pagmo2 and the complete installation instructions can be found on the following link
-
-https://esa.github.io/pagmo2/install.html
-
-Secondly get a licence and install the Gurobi solver as instructed here:
-
-https://www.gurobi.com/documentation/9.0/quickstart_linux/software_installation_guid.html
+https://www.gurobi.com/documentation/quickstart.html
 
 Then install necessary python libraries by executing:
 ```shell
 pip install -r requirements.txt
 ```
 
-After this install the prophet python library. In our case pip returned an error and we had to install it using conda. 
+For the prophet and pygmo library it is better to install them using conda
 
 ```shell
-conda install prophet
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+conda install prophet==1.0.1
+conda install pygmo==2.16.0
 ```
 
 The modified Optim_eval needs to be compiled, to do this execute the following commands:
