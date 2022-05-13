@@ -94,14 +94,14 @@ def plot_generation_results(result_dir):
                     break
                 prev_val = value
 
-    base_small = 142326.01
-    base_large = 135364.47
+    base_small = 140609.53
+    base_large = 134799.65
 
-    impr_small = 138769.61
-    impr_large = 133345.86
+    impr_small = 138115.58
+    impr_large = 133046.43
 
-    batt_small = 133726.84
-    batt_large = 128957.64
+    batt_small = 127880.19
+    batt_large = 125811.76
 
     red = Color("red")
     if len(pygmo_small.keys()) != 0:

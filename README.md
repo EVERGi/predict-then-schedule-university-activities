@@ -24,21 +24,21 @@ conda install prophet==1.0.1
 conda install pygmo==2.16.0
 ```
 
-The modified Optim_eval needs to be compiled, to do this execute the following commands:
+The objective function for the schedule written by the organiser of the competition needs to be build with Maven before executing the shedule optimisation:
 
 ```shell
 cd optimise/Optim_eval/
 mvn package
 ```
 
-Java also needs to be intalled to execute the build jar files in the command line.
+Java needs to be intalled to execute the built jar files in the command line.
 
 
 ## Forecast generation
 
-The forecasting code has been tested successfully on MacOs with python version 3.8
+The forecasting code has been tested successfully on MacOs and Linux with python version 3.8
 
-The forecast is generated when running execute.py script from the forecast directory.
+The forecast is generated when running [execute.py](forecast/execute.py) script from the forecast directory.
 First a preprocessing script is run, which takes about a minute.
 Further, the scripts for producing forecast for solar and building time series are executed in succession.
 An estimate for the running time should be about an hour.
@@ -47,16 +47,16 @@ The final output of the forecast is saved to './results/submission_phase2.csv'
 
 ### Schedule optimisation
 
-The optimisation code has been tested successfully on Linux with python versions 3.7 and 3.8.
+The schedule optimisation code has been tested successfully on Linux with python versions 3.7 and 3.8.
 
-When everything is correctly installed you can execute the execute.py file in the optimise folder.
+When everything is correctly installed you can execute the [execute.py](optimise/execute.py) file in the optimise folder.
 
 !!! You need to execute it from inside the optimise folder so don't forget to execute the following command when in the root directory of the project:
 ```shell
 cd optimise
 ```
 
-The execution will run in about 30 minutes, the results shown are obtained running CMA-ES with a population size of 200 for 120 seconds. The improved solution and the battery schedule are generated exactly as for the competition.
-You can change the population size, evolutionary algorithm used and time to find the base solution in the execute.py file itself.
+The execution will run in about 30 minutes, the results shown are obtained running CMA-ES with a population size of 100 for 12 hours. This execution is exactly the same as shown in section n IV-B5 of the paper.
+You can change the population size, evolutionary algorithm used and time to find the base solution in the [execute.py](optimise/execute.py) file itself.
 
-The plots that appear show the graphs presented in the report but for the run you just executed and also the activity plot for the small_0 instance submitted for the competition and presented in the report. In addition there is also a plot of the final load after improvement (in blue) and of the load with the battery (in orange) for the small_0 instance.
+The plots that appear show the graphs presented in the paper but for the run you just executed and also the activity plot for the small_0 instance submitted for the competition and presented in the paper. In addition there is also a plot of the final load after improvement (in blue) and of the load with the battery (in orange) for the small_0 instance.
